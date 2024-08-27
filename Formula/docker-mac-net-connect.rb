@@ -11,6 +11,8 @@ class DockerMacNetConnect < Formula
 
   depends_on "go" => :build
 
+  patch :p1, :DATA
+
   def install
     if ENV["HOMEBREW_GOPROXY"]
       ENV["GOPROXY"] = ENV["HOMEBREW_GOPROXY"]
@@ -41,3 +43,18 @@ class DockerMacNetConnect < Formula
     system "false"
   end
 end
+
+__END__
+diff --git a/Makefile b/Makefile
+index 2021ae7..d9c03fe 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ PROJECT         := github.com/chipmk/docker-mac-net-connect
+ SETUP_IMAGE     := ghcr.io/chipmk/docker-mac-net-connect/setup
+ VERSION         := $(shell git describe --tags)
+-LD_FLAGS        := -X ${PROJECT}/version.Version=${VERSION} -X ${PROJECT}/version.SetupImage=${SETUP_IMAGE}
++LD_FLAGS        := -checklinkname=0 -X ${PROJECT}/version.Version=${VERSION} -X ${PROJECT}/version.SetupImage=${SETUP_IMAGE}
+
+ run:: build-docker run-go
+ build:: build-docker build-go
